@@ -5,15 +5,19 @@ Array.prototype.swap = function(arr, m, n) {
     arr[n] = temp
 }
 
-// 冒泡排序
+// 1、冒泡排序
+// 基本思路（假设数组有n个元素，以正序排列为例）：
+// 1）从第1个元素开始，依次向后两两元素比较，如果前面比后面大，则两两交换位置，直到比较到倒数第1个元素（比较了n-1次）
+// 2）从第1个元素开始，依次向后两两元素比较，如果前面比后面大，则两两交换位置，直到比较到倒数第2个元素（比较了n-2次）
+// 3）从第1个元素开始，依次向后两两元素比较，如果前面比后面大，则两两交换位置，直到比较到倒数第3个元素（比较了n-3次）
+// 依此类推……
 Array.prototype.bubbleSort = function() {
     // 1.获取数组的长度
     let length = this.length
-
-    // 2.反向循环, 因此次数越来越少
-    for (let i = length - 1; i >= 0; i--) {
+        // 2.循环
+    for (let i = 0; i < length - 1; i++) {
         // 3.根据i的次数, 比较循环到i位置
-        for (let j = 0; j < i; j++) {
+        for (let j = 0; j < length - 1 - i; j++) {
             // 4.如果j位置比j+1位置的数据大, 那么就交换
             if (this[j] > this[j + 1]) {
                 // 交换
@@ -24,12 +28,15 @@ Array.prototype.bubbleSort = function() {
     return this
 }
 
-// 选择排序
+// 2、选择排序
+// 基本思路（假设数组有n个元素，以正序排列为例）：
+// 1）从第1个元素到倒数第1个元素，选出最小的元素，与第1个元素交换
+// 2）从第2个元素到倒数第1个元素，选出最小的元素，与第2个元素交换
+// 2）从第3个元素到倒数第1个元素，选出最小的元素，与第3个元素交换
+// 依此类推……
 Array.prototype.selectionSort = function() {
-    // 1.获取数组的长度
     let length = this.length
-
-    // 2.外层循环: 从0位置开始取出数据, 直到length-2位置
+        // 2.外层循环: 从0位置开始取出数据, 直到length-2位置
     for (let i = 0; i < length - 1; i++) {
         // 3.内层循环: 从i+1位置开始, 和后面的内容比较
         let min = i
@@ -45,7 +52,12 @@ Array.prototype.selectionSort = function() {
     return this
 }
 
-// 插入排序
+// 3、插入排序
+// 基本思路（假设数组有n个元素，以正序排列为例）：
+// 1）第2个元素与前面所有元素比较，插入到合适位置
+// 2）第3个元素与前面所有元素比较，插入到合适位置
+// 3）第4个元素与前面所有元素比较，插入到合适位置
+// 依此类推……
 Array.prototype.insertionSort = function() {
     // 1.获取数组的长度
     let length = this.length
@@ -68,7 +80,13 @@ Array.prototype.insertionSort = function() {
     return this
 }
 
-// 希尔排序
+// 4、希尔排序
+// 基本思路（假设数组有n个元素，以正序排列为例）：
+// 1）取初始间隔gap=Math.floor(length / 2)，从第一个元素开始，每隔gap的元素依次排好序
+// 2）重新取间隔gap = Math.floor(gap / 2)，从第一个元素开始，每隔gap的元素依次排好序
+// 3）重新取间隔gap = Math.floor(gap / 2)，从第一个元素开始，每隔gap的元素依次排好序
+// ……依此类推……（直到gap小于零停止）
+// n）最后肯定会到达gap=1，此时就是插入排序了
 Array.prototype.shellSort = function() {
     // 1.获取数组的长度
     let length = this.length
@@ -100,65 +118,155 @@ Array.prototype.shellSort = function() {
     return this
 }
 
-Array.prototype.median = function(left, right) {
-    // 1.求出中间的位置
-    let center = Math.floor((left + right) / 2)
-
-    // 2.判断并且进行交换
-    if (this[left] > this[center]) {
-        this.swap(this, left, center)
-    }
-    if (this[center] > this[right]) {
-        this.swap(this, center, right)
-    }
-    if (this[left] > this[right]) {
-        this.swap(this, left, right)
-    }
-
-    // 3.巧妙的操作: 将center移动到right - 1的位置.
-    this.swap(this, center, right - 1)
-
-    // 4.返回pivot
-    return this[right - 1]
-}
-
-// 快速排序实现
+// 5、快速排序
+// 基本思路（假设数组有n个元素，以正序排列为例）：
+// 1）创建两数组left和right
+// 2）取基准值（以中间位置的元素为例），将小于它的都放入left，大于它的都放入right
+// 3）递归调用，对left和right也采用同样的方法
 Array.prototype.quickSort = function() {
-    this.quickSortRec(0, this.length - 1)
-    return this
+    if (this.length <= 1) return this
+    const pivotIndex = Math.floor(this.length / 2);
+    const pivot = this.splice(pivotIndex, 1)[0];
+    let left = [],
+        right = [];
+    this.forEach(item => {
+        item < pivot ? left.push(item) : right.push(item)
+    });
+    return left.quickSort().concat(pivot, right.quickSort()); //分而治之
 }
 
-Array.prototype.quickSortRec = function(left, right) {
-    // 0.递归结束条件
-    if (left >= right) return
 
-    // 1.获取枢纽
-    let pivot = this.median(left, right)
+// 6、归并排序
+// 基本思路（假设数组有n个元素，以正序排列为例）：
+// 将局部排好序，再与其他局部按顺序合并，再与其他局部按顺序合并，再与其他局部按顺序合并，……越扩越大
+// 代码实现应该反过来，采用递归思想解决
+Array.prototype.mergeSort = function() {
+    let len = arr.length;
+    if (len < 2) {
+        return arr;
+    }
+    let middle = Math.floor(len / 2),
+        left = arr.slice(0, middle),
+        right = arr.slice(middle);
+    return _merge(mergeSort(left), mergeSort(right));
+}
 
-    // 2.开始进行交换
-    // 2.1.记录左边开始位置和右边开始位置
-    let i = left
-    let j = right - 1
-        // 2.2.循环查找位置
-    while (true) {
-        while (this[++i] < pivot) {}
-        while (this[--j] > pivot) {}
-        if (i < j) {
-            // 2.3.交换两个数值
-            this.swap(i, j)
+// merge函数将两个数组按顺序合并为一个数组
+function _merge(left, right) {
+    let result = [];
+
+    while (left.length && right.length) {
+        if (left[0] <= right[0]) {
+            result.push(left.shift());
         } else {
-            // 2.4.当i<j的时候(一定不会=, 看下面解释中的序号3), 停止循环因为两边已经找到了相同的位置
-            break
+            result.push(right.shift());
         }
     }
 
-    // 3.将枢纽放在正确的位置
-    this.swap(i, right - 1)
+    while (left.length)
+        result.push(left.shift());
 
-    // 4.递归调用左边
-    this.quickSortRec(left, i - 1)
-    this.quickSortRec(i + 1, right)
+    while (right.length)
+        result.push(right.shift());
+
+    return result;
 }
+
+// 7、堆排序
+// 略
+
+// 8、计数排序
+// Array.prototype.countingSort = function(maxValue) {
+//     let bucket = new Array(maxValue + 1),
+//         sortedIndex = 0,
+//         arrLen = this.length,
+//         bucketLen = maxValue + 1;
+
+//     for (let i = 0; i < arrLen; i++) {
+//         if (!bucket[this[i]]) {
+//             bucket[this[i]] = 0;
+//         }
+//         bucket[this[i]]++;
+//     }
+
+//     for (let j = 0; j < bucketLen; j++) {
+//         while (bucket[j] > 0) {
+//             this[sortedIndex++] = j;
+//             bucket[j]--;
+//         }
+//     }
+
+//     return this;
+// }
+
+// 9、桶排序
+Array.prototype.bucketSort = function(bucketSize) {
+    if (this.length === 0) {
+        return this;
+    }
+
+    let i;
+    let minValue = this[0];
+    let maxValue = this[0];
+    for (i = 1; i < this.length; i++) {
+        if (this[i] < minValue) {
+            minValue = this[i]; //输入数据的最小值
+        } else if (this[i] > maxValue) {
+            maxValue = this[i]; //输入数据的最大值
+        }
+    }
+
+    //桶的初始化
+    let DEFAULT_BUCKET_SIZE = 5; //设置桶的默认数量为5
+    bucketSize = bucketSize || DEFAULT_BUCKET_SIZE;
+    let bucketCount = Math.floor((maxValue - minValue) / bucketSize) + 1;
+    let buckets = new Array(bucketCount);
+    for (i = 0; i < buckets.length; i++) {
+        buckets[i] = [];
+    }
+
+    //利用映射函数将数据分配到各个桶中
+    for (i = 0; i < this.length; i++) {
+        buckets[Math.floor((this[i] - minValue) / bucketSize)].push(this[i]);
+    }
+
+    this.length = 0;
+    for (i = 0; i < buckets.length; i++) {
+        buckets[i].insertionSort(); //对每个桶进行排序，这里使用了插入排序
+        for (let j = 0; j < buckets[i].length; j++) {
+            this.push(buckets[i][j]);
+        }
+    }
+
+    return this;
+}
+
+// 10、基数排序
+// Array.prototype.radixSort = function(maxDigit) {
+//     let mod = 10;
+//     let dev = 1;
+//     let counter = [];
+//     for (let i = 0; i < maxDigit; i++, dev *= 10, mod *= 10) {
+//         for (let j = 0; j < arthisr.length; j++) {
+//             let bucket = parseInt((this[j] % mod) / dev);
+//             if (counter[bucket] == null) {
+//                 counter[bucket] = [];
+//             }
+//             counter[bucket].push(arr[j]);
+//         }
+//         let pos = 0;
+//         for (let j = 0; j < counter.length; j++) {
+//             let value = null;
+//             if (counter[j] != null) {
+//                 while ((value = counter[j].shift()) != null) {
+//                     this[pos++] = value;
+//                 }
+//             }
+//         }
+//     }
+//     return this;
+// }
+
 
 
 // 测试
@@ -167,20 +275,37 @@ for (let i = 0; i < 20; i++) {
     const n = Math.floor(Math.random() * 100)
     arr.push(n)
 }
-console.log('arr：');
+console.log('原始数组：');
 console.log(arr);
 
-console.log('bubbleSort：');
-console.log(arr.bubbleSort());
+// console.log('bubbleSort：');
+// arr.bubbleSort()
+// console.log(arr);
 
-console.log('insertionSort：');
-console.log(arr.insertionSort());
+// console.log('selectionSort：');
+// arr.selectionSort()
+// console.log(arr);
 
-console.log('selectionSort：');
-console.log(arr.selectionSort());
+// console.log('insertionSort：');
+// arr.insertionSort()
+// console.log(arr);
 
-console.log('shellSort：');
-console.log(arr.shellSort());
+// console.log('shellSort：');
+// arr.shellSort()
+// console.log(arr);
 
-console.log('quickSort：');
-console.log(arr.quickSort());
+// console.log('quickSort：');
+// arr.quickSort()
+// console.log(arr);
+
+// console.log('countingSort');
+// arr.countingSort()
+// console.log(arr);
+
+// console.log('bucketSort');
+// arr.bucketSort()
+// console.log(arr);
+
+// console.log('radixSort');
+// arr.radixSort()
+// console.log(arr);
